@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Basic Ahh Site</title>
+<style>
+#tt {
+color: #ff0000;
+font-size: 12px;
+}
+body {
+font-family: Arial, sans-serif;
+margin: 0;
+padding: 20px;
+transition: background-color 0.3s, color 0.3s;
+}
+body.dark-mode {
+background-color: #1a1a1a;
+color: #f0f0f0;
+}
+body.light-mode {
+background-color: #f0f0f0;
+color: #1a1a1a;
+}
+.container {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 20px;
+}
+.panel {
+border-radius: 10px;
+padding: 20px;
+transition: background-color 0.3s;
+}
+body.dark-mode .panel {
+background-color: #2a2a2a;
+}
+body.light-mode .panel {
+background-color: #ffffff;
+box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+.controls {
+display: flex;
+flex-direction: column;
+gap: 10px;
+}
+button, select {
+background-color: #0000ff;
+color: white;
+border: none;
+padding: 10px;
+border-radius: 5px;
+cursor: pointer;
+}
+.slider-container {
+display: flex;
+align-items: center;
+gap: 10px;
+}
+.slider-wrapper {
+display: flex;
+align-items: center;
+gap: 10px;
+}
+input[type="range"] {
+flex-grow: 1;
+}
+input[type="number"] {
+width: 60px;
+}
+#visualizer {
+width: 100%;
+height: 200px;
+background-color: #000;
+border-radius: 10px;
+}
+#customCodeInput {
+width: 100%;
+height: 100px;
+border-radius: 5px;
+transition: background-color 0.3s, color 0.3s, border 0.3s;
+}
+body.dark-mode #customCodeInput {
+background-color: #2a2a2a;
+color: #f0f0f0;
+border: 1px solid #444;
+}
+body.light-mode #customCodeInput {
+background-color: #ffffff;
+color: #1a1a1a;
+border: 1px solid #ccc;
+}
+@media (max-width: 768px) {
+.container {
+grid-template-columns: 1fr;
+}
+.panel {
+padding: 10px;
+}
+.controls {
+gap: 5px;
+}
+button, select {
+padding: 8px;
+font-size: 14px;
+}
+#visualizer {
+height: 150px;
+order: -1;
+}
+#customCodeInput {
+height: 80px;
+}
+}
+#crashHandler {
+background-color: #ff0000;
+padding: 10px;
+border-radius: 5px;
+display: none;
+}
+body.dark-mode #crashHandler {
+background-color: #800000;
+color: #f0f0f0;
+}
+body.light-mode #crashHandler {
+background-color: #ff0000;
+color: #ffffff;
+}
+
+.switch {
+position: relative;
+display: inline-block;
+width: 60px;
+height: 34px;
+}
+.switch input {
+opacity: 0;
+width: 0;
+height: 0;
+}
+.slider {
+position: absolute;
+cursor: pointer;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: #ccc;
+transition: .4s;
+}
+.slider:before {
+position: absolute;
+content: "";
+height: 26px;
+width: 26px;
+left: 4px;
+bottom: 4px;
+background-color: white;
+transition: .4s;
+}
+input:checked + .slider {
+background-color: #2196F3;
+}
+input:focus + .slider {
+box-shadow: 0 0 1px #2196F3;
+}
+input:checked + .slider:before {
+transform: translateX(26px);
+}
+.slider.round {
+border-radius: 34px;
+}
+.slider.round:before {
+border-radius: 50%;
+}
+
+.video-wrapper {
+display: none;
+}
+
+#videoPlayer {
+display: none;
+}
+</style>
+</head>
+<body>
+<body class="dark-mode">
+<div class="container">
+<div class="panel">
+<h1>Basic Ahh site</h1>
+<div id="tt">This is buggy ass hell, Please tell me (D3nschøt) when something goes wrong</div>
+<br></br>
+<input type="file" id="audioFile" accept="audio/*,video/*">
+<div class="video-wrapper">
+<video id="videoPlayer" controls></video>
+</div>
+<div id="audioControls" class="controls">
+<button id="playPause">Play/Pause</button>
+<div id="audioWarning" style="color: #ff5000; display: none;">You need an audio file</div>
+<span id="durationCounter"></span>
+<button id="visualiserType">Visualiser: Frequency Log</button>
+<button id="saveAudio">Save audio effect</button>
+<div>
+<div>
+    <label for="saveOffset">Save Offset (seconds):</label> <!--recomended-->
+    <input type="range" id="saveOffset" min="0" max="5" step="0.1" value="0">
+    <input type="number" id="saveOffsetInput" min="0" max="5" step="0.1" value="0">
+</div>
+</div>
+</div>
+<div id="filterControls" class="controls">
+<h2>Effect Controls</h2>
+<select id="filterType">
+<option value="lowpass">Low Pass</option>
+<option value="highpass">High Pass</option>
+<option value="bandpass">Band Pass</option>
+<option value="notch">Notch</option>
+<option value="moog">Moog</option>
+<option value="RC">RC Filter</option>
+<option value="Distortion">Distortion</option>
+<option value="flanger">Flanger</option>
+<option value="convolver">Convolver</option>
+<option value="bitcrusher">Bitcrusher</option>
+<option value="ringmod">Ring Modulation</option>
+<option value="vibrato">Vibrato</option>
+<option value="pitch">Pitch</option>
+<option Value="nonlinearFilter">Non-Linear filters</option>
+<option value="phaser">phaser</option>
+<option value="custom">Custom</option>
+</select>
+<div id="ringmodControls" style="display: none;">
+<div class="slider-container">
+<label for="ringmodFrequencySlider">Frequency:&nbsp;&nbsp;&nbsp;&nbsp;</label>
+<div class="slider-wrapper">
+<input type="range" id="ringmodFrequencySlider" min="1" max="20000" step="1" value="440">
+<input type="number" id="ringmodFrequencyInput" min="1" max="20000" step="1" value="440">
+<span id="ringmodFrequencyValue">Hz</span>
+</div>
+</div>
+<div class="slider-container">
+<label for="ringmodDepthSlider">Depth:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+<div class="slider-wrapper">
+<input type="range" id="ringmodDepthSlider" min="0" max="1" step="0.01" value="1">
+<input type="number" id="ringmodDepthInput" min="0" max="1" step="0.01" value="1">
+<span id="ringmodDepthValue"></span>
+</div>
+</div>
+<div class="slider-container">
+<label for="ringmodWaveType">Wave Type:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+<div class="slider-wrapper">
+<select id="ringmodWaveType">
+<option value="sine">Sine</option>
+<option value="square">Square</option>
+<option value="sawtooth">Sawtooth</option>
+<option value="triangle">Triangle</option>
+<option value="custom">Custom</option>
+</select>
+<textarea id="RingModcustomWaveform" placeholder="Enter custom waveform here (e.g., 'x * Math.sin(2 * Math.PI * x)')"></textarea>
+</div>
+</div>
+</div>
+<div id="standardFilterControls">
+<div class="slider-container">
+<label for="frequencySlider">Frequency:&nbsp;&nbsp;&nbsp;&nbsp;</label>
+<div class="slider-wrapper">
+<input type="range" id="frequencySlider" min="1" max="20000" value="1000">
+<input type="number" id="frequencyInput" min="1" max="20000" value="1000">
+<span id="frequencyValue">Hz</span>
+</div>
+</div>
+<div class="slider-container">
+<label for="resonanceSlider">Resonance:&nbsp;&nbsp;&nbsp;</label>
+<div class="slider-wrapper">
+<input type="range" id="resonanceSlider" min="0" max="100" value="1">
+<input type="number" id="resonanceInput" min="0" max="100" value="1">
+<span id="resonanceValue"></span>
+</div>
+</div>
+</div>
+<div id="distortionControls" style="display: none;">
+<div class="slider-container">
+<label for="distortionSlider">Distortion:&nbsp;&nbsp;&nbsp;</label>
+<div class="slider-wrapper">
+<input type="range" id="distortionSlider" min="0" max="1000" value="50">
+<input type="number" id="distortionInput" min="0" max="1000" value="50">
+<span id="distortionValue"></span>
+</div>
+</div>
+</div>
+<div id="flangerControls" style="display: none;">
+<div class="slider-container">
+<label for="flangerDelaySlider">Flanger Delay:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+<div class="slider-wrapper">
+<input type="range" id="flangerDelaySlider" min="0.0001" max="0.1" step="0.0001" value="0.005">
+<input type="number" id="flangerDelayInput" min="0.0001" max="0.1" step="0.0001" value="0.005">
+<span id="flangerDelayValue">s</span>
+</div>
+</div>
+<div class="slider-container">
+<label for="flangerDepthSlider">Flanger Depth:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+<div class="slider-wrapper">
+<input type="range" id="flangerDepthSlider" min="0" max="1" step="0.0001" value="0.5">
+<input type="number" id="flangerDepthInput" min="0" max="1" step="0.0001" value="0.5">
+<span id="flangerDepthValue"></span>
+</div>
+</div>
+<div class="slider-container">
+<label for="flangerFeesdbackSlider">Flanger Feedback:</label>
+<div class="slider-wrapper">
+<input type="range" id="flangerFeedbackSlider" min="0" max="1" step="0.01" value="0.5">
+<input type="number" id="flangerFeedbackInput" min="0" max="1" step="0.01" value="0.5">
+<span id="flangerFeedbackValue"></span>
+</div>
+</div>
+<div class="slider-container">
+<label for="flangerRateSlider">Flanger Rate:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+<div class="slider-wrapper">
+<input type="range" id="flangerRateSlider" min="0" max="20" step="0.001" value="0.5000">
+<input type="number" id="flangerRateInput" min="0" max="20" step="0.001" value="0.5000">
+<span id="flangerRateValue">Hz</span>
+</div>
+</div>
+<div class="slider-container">
+<label for="flangerWaveType">Wave Type:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+<div class="slider-wrapper">
+<select id="flangerWaveType">
+<option value="sine">Sine</option>
+<option value="square">Square</option>
+<option value="sawtooth">Sawtooth</option>
+<option value="triangle">Triangle</option>
+<option value="custom">Custom</option>
+</select>
+<textarea id="FlangercustomWaveform" placeholder="Enter custom waveform here (e.g., 'x * Math.sin(2 * Math.PI * x)')"></textarea>
+</div>
+</div>
+<div class="slider-container">
+<label for="flangerInvert">Invert Flanger:</label>
+<div class="slider-wrapper">
+<input type="checkbox" id="flangerInvert">
+</div>
+</div>
+</div>
+<div id="convolverControls" style="display: none;">
+<div class="slider-container">
+<label for="convolverDurationSlider">Duration:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+<div class="slider-wrapper">
+<input type="range" id="convolverDurationSlider" min="0.1" max="10" step="0.1" value="1">
+<input type="number" id="convolverDurationInput" min="0.1" max="10" step="0.1" value="1">
+<span id="convolverDurationValue">s</span>
+</div>
+</div>
+</div>
+<div id="moogControls" style="display: none;">
+<div class="slider-container">
+<label for="moogCutoffSlider">Cutoff:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+<div class="slider-wrapper">
+<input type="range" id="moogCutoffSlider" min="0" max="1" step="0.001" value="0.065">
+<input type="number" id="moogCutoffInput" min="0" max="1" step="0.001" value="0.065">
+<span id="moogCutoffValue"></span>
+</div>
+</div>
+<div class="slider-container">
+<label for="moogResonanceSlider">Resonance:&nbsp;&nbsp;&nbsp;</label>
+<div class="slider-wrapper">
+<input type="range" id="moogResonanceSlider" min="0" max="4" step="0.01" value="3.99">
+<input type="number" id="moogResonanceInput" min="0" max="4" step="0.01" value="3.99">
+<span id="moogResonanceValue"></span>
+</div>
+</div>
+</div>
+<div id="bitcrusherControls" style="display: none;">
+<div class="slider-container">
+<label for="bitcrusherBitsSlider">Bits:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+<div class="slider-wrapper">
+<input type="range" id="bitcrusherBitsSlider" min="1" max="16" step="1" value="4">
+<input type="number" id="bitcrusherBitsInput" min="1" max="16" step="1" value="4">
+<span id="bitcrusherBitsValue"></span>
+</div>
+</div>
+<div class="slider-container">
+<label for="bitcrusherNormfreqSlider">Norm Freq:&nbsp;&nbsp;&nbsp;</label>
+<div class="slider-wrapper">
+<input type="range" id="bitcrusherNormfreqSlider" min="0" max="1" step="0.01" value="0.1">
+<input type="number" id="bitcrusherNormfreqInput" min="0" max="1" step="0.01" value="0.1">
+<span id="bitcrusherNormfreqValue"></span>
+</div>
+</div>
+</div>
+<div id="ringmodControls" style="display: none;">
+<div class="slider-container">
+<label for="ringmodFrequencySlider">Frequency:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+<div class="slider-wrapper">
+<input type="range" id="ringmodFrequencySlider" min="1" max="5000" step="1" value="440">
+<input type="number" id="ringmodFrequencyInput" min="1" max="5000" step="1" value="440">
+<span id="ringmodFrequencyValue">Hz</span>
+</div>
+</div>
+<div class="slider-container">
+<label for="ringmodDepthSlider">Depth:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+<div class="slider-wrapper">
+<input type="range" id="ringmodDepthSlider" min="0" max="1" step="0.01" value="1">
+<input type="number" id="ringmodDepthInput" min="0" max="1" step="0.01" value="1">
+<span id="ringmodDepthValue"></span>
+</div>
+</div>
+<div class="slider-container">
+<label for="ringmodWaveType">Wave Type:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+<div class="slider-wrapper">
+</div>
+</div>
+</div>
+<div id="vibratoControls" style="display: none;">
+<div class="slider-container">
+<label for="vibratoRateSlider">Vibrato Rate:&nbsp;&nbsp;</label>
+<div class="slider-wrapper">
+<input type="range" id="vibratoRateSlider" min="0.1" max="1000" step="0.1" value="5">
+<input type="number" id="vibratoRateInput" min="0.1" max="1000" step="0.1" value="5">
+<span id="vibratoRateValue">Hz</span>
+</div>
+</div>
+<div class="slider-container">
+<label for="vibratoDepthSlider">Vibrato Depth:</label>
+<div class="slider-wrapper">
+<input type="range" id="vibratoDepthSlider" min="0" max="1200" step="1" value="300">
+<input type="number" id="vibratoDepthInput" min="0" max="1200" step="1" value="300">
+<span id="vibratoDepthValue">cents</span>
+</div>
+</div>
+<div class="slider-container">
+<label for="vibratoWaveType">Wave Type:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+<div class="slider-wrapper">
+<select id="vibratoWaveType">
+<option value="sine">Sine</option>
+<option value="square">Square</option>
+<option value="sawtooth">Sawtooth</option>
+<option value="triangle">Triangle</option>
+<option value="custom">Custom</option>
+</select>
+<textarea id="VibratocustomWaveform" placeholder="Enter custom waveform here (e.g., 'x * Math.sin(2 * Math.PI * x)')"></textarea>
+</div>
+</div>
+</div>
+<div id="pitchShiftControls" style="display: none;">
+<div class="slider-container">
+<label for="pitchShiftSlider">Pitch Shift:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+<div class="slider-wrapper">
+<input type="range" id="pitchShiftSlider" min="-24" max="24" step="0.1" value="0">
+<input type="number" id="pitchShiftInput" min="-24" max="24" step="0.1" value="0">
+<span id="pitchShiftValue">semitones</span>
+</div>
+</div>
+<div class="slider-container">
+<label for="pitchShiftQualitySlider">Pitch Shift Quality:</label>
+<div class="slider-wrapper">
+<input type="range" id="pitchShiftQualitySlider" min="8" max="14" step="1" value="11">
+<input type="number" id="pitchShiftQualityInput" min="8" max="14" step="1" value="11">
+<span id="pitchShiftQualityValue">samples</span>
+</div>
+</div>
+</div>
+</div>
+<div class="nonlinFilters" style="display: none;">
+    <div class="control-group">
+        <label for="nonlinearFilterFrequencyValue">Frequency:</label>
+        <input type="range" id="nonlinearFilterFrequencyValue" min="0" max="1" step="0.001" value=".1">
+        <input type="number" id="nonlinearFilterFrequencyInput" min="0" max="1" step="0.001" value=".1">
+    </div>
+    <div class="control-group">
+        <label for="nonlinearFilterResonanceValue">Resonance:</label>
+        <input type="range" id="nonlinearFilterResonanceValue" min="0" max="1" step="0.001" value=".1">
+        <input type="number" id="nonlinearFilterResonanceInput" min="0" max="1" step="0.001" value=".1">
+    </div>
+    <div class="control-group">
+        <label for="nonlinearFilterType">Nonlinear Filter Type</label>
+        <select id="nonlinearFilterType">
+            <option value="1">Low-Pass</option>
+            <option value="2">High-Pass</option>
+            <option value="3">Band-Pass</option>
+        </select>
+    </div>
+    <div class="control-group">
+        <label for="nonlinearFilterMode">Filter Mode</label>
+        <select id="nonlinearFilterMode">
+            <option value="0">Standard (Sine-like)</option>
+            <option value="1">Clipped (Triangle-like)</option>
+            <option value="2">Positive Clipped (+Saw-like)</option>
+            <option value="3">Negative Clipped (-saw-like)</option>
+            <option value="4">Dual Filter (pulse-like)</option>
+        </select>
+    </div>
+</div>
+
+<div id="phaserControls" style="display: none;">
+<div class="control-group">
+<label for="phaserMinFrequencySlider">MinFrequency:&nbsp;&nbsp;&nbsp;&nbsp;</label>
+<input type="range" id="phaserMinFrequencySlider" min="0" max="1" step="0.001" value="0">
+<input type="number" id="phaserMinFrequencyInput" min="0" max="1" step="0.001" value="0">
+</div>
+
+<div class="control-group">
+<label for="phaserMaxFrequencySlider">MaxFrequency:&nbsp;&nbsp;&nbsp;</label>
+<input type="range" id="phaserMaxFrequencySlider" min="0" max="1" step="0.001" value="1">
+<input type="number" id="phaserMaxFrequencyInput" min="0" max="1" step="0.001" value="1">
+</div>
+
+<div class="control-group">
+<label for="phaserFeedbackSlider">Feedback:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+<input type="range" id="phaserFeedbackSlider" min="0" max="1" step="0.001" value=".5">
+<input type="number" id="phaserFeedbackInput" min="0" max="1" step="0.001" value=".5">
+</div>
+
+<div class="control-group">
+<label for="phaserRateSlider">Rate:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+<input type="range" id="phaserRateSlider" min="0" max="100" step="0.001" value=".1">
+<input type="number" id="phaserRateInput" min="0" max="100" step="0.001" value=".1">
+</div>
+
+<div class="control-group">
+    <label for="PhaserBands">Phaser bands:</label>
+    <input type="number" id="PhaserBands" min="0" step="1" value="3">
+</div>
+
+<div class="control-group">
+    <label for="PhaserWetSlider">Phaser Wet/Dry:</label>
+    <input type="range" id="PhaserWetSlider" min="-1" max="1" step="0.001" value=".5">
+    <input type="number" id="PhaserWetInput" min="-1" max="1" step="0.001" value=".5">
+</div>
+
+<div class="control-group">
+    <label for="PhaserWaveType">Wave Type:</label>
+    <select id="PhaserWaveType">
+        <option value="sine">Sine</option>
+        <option value="square">Square</option>
+        <option value="sawtooth">Sawtooth</option>
+        <option value="triangle">Triangle</option>
+        <option value="custom">Custom</option>
+    </select>
+    <textarea id="PhasercustomWaveform" placeholder="Enter custom waveform here (e.g., 'x * Math.sin(2 * Math.PI * x)')"></textarea>
+</div>
+
+</div>
+<div class="slider-container">
+<label for="volumeSlider">Volume:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+<div class="slider-wrapper">
+<input type="range" id="volumeSlider" min="0" max="2" step="0.01" value="1">
+<input type="number" id="volumeInput" min="0" max="2" step="0.01" value="1">
+<span id="volumeValue">%</span>
+</div>
+</div>
+<div class="slider-container">
+<label for="limiterToggle">Limiter:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+<div class="slider-wrapper">
+<input type="checkbox" id="limiterToggle" checked>
+</div>
+</div>
+<div class="slider-container">
+<label for="limiterThresholdSlider">Limiter Threshold:</label>
+<div class="slider-wrapper">
+<input type="range" id="limiterThresholdSlider" min="-60" max="0" step="0.1" value="-0.5">
+<input type="number" id="limiterThresholdInput" min="-60" max="0" step="0.1" value="-0.5">
+<span id="limiterThresholdValue">dB</span>
+</div>
+</div>
+<div class="slider-container">
+<label for="dcRemovalToggle">DC Removal:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+<div class="slider-wrapper">
+<input type="checkbox" id="dcRemovalToggle">
+</div>
+</div>
+<div id="crashHandler"></div>
+<div class="settings-panel">
+<h2>Settings
